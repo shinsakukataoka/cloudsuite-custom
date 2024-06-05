@@ -1,0 +1,18 @@
+Jun 03, 2024 9:39:26 AM com.sun.faban.driver.engine.MasterImpl configureAgents
+INFO: Configuring 1 SearchDriverAgents...
+Jun 03, 2024 9:39:31 AM com.sun.faban.driver.engine.MasterImpl executeRun
+INFO: Started all threads; run commences in 2997 ms
+Jun 03, 2024 9:39:54 AM com.sun.faban.driver.engine.MasterImpl executeRun
+INFO: Ramp up completed
+Jun 03, 2024 9:40:54 AM com.sun.faban.driver.engine.MasterImpl executeRun
+INFO: Steady state completed
+Jun 03, 2024 9:41:04 AM com.sun.faban.driver.engine.MasterImpl executeRun
+INFO: Ramp down completed
+Jun 03, 2024 9:41:04 AM com.sun.faban.driver.engine.MasterImpl getDriverMetrics
+INFO: Gathering SearchDriverStats ...
+Jun 03, 2024 9:41:04 AM com.sun.faban.driver.engine.MasterImpl generateReports
+INFO: Printing Summary report ...
+Jun 03, 2024 9:41:04 AM com.sun.faban.driver.engine.MasterImpl generateReports
+INFO: Summary finished. Now printing detail ...
+Jun 03, 2024 9:41:04 AM com.sun.faban.driver.engine.MasterImpl generateReports
+INFO: Detail finished. Results written to /usr/src/outputFaban/1.

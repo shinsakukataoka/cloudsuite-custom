@@ -5,14 +5,11 @@ RUN groupadd -r memcache && useradd -r -g memcache memcache
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN buildDeps='curl gcc libc6-dev make' \	
+RUN buildDeps='curl gcc libc6-dev make git ca-certificates' \	
 	&& set -x \
 	&& apt-get update && apt-get install -y $buildDeps libevent-dev vim --no-install-recommends \
 	&& rm -rf /var/lib/apt/lists/* \
-	&& curl -k -L --remote-name http://github.com/parsa-epfl/memcached-loadtester/archive/refs/tags/v4.0.tar.gz \
-	&& mkdir -p /usr/src/memcached \
-	&& tar xvf v4.0.tar.gz -C /usr/src/memcached --strip-components=1 \
-	&& rm v4.0.tar.gz \
+	&& git clone https://github.com/shinsakukataoka/memcached-loadtester.git /usr/src/memcached \
 	&& cd /usr/src/memcached/memcached_client \
 	&& make -j $(nproc) \
 	&& chown -R memcache:memcache /usr/src/memcached \

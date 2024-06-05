@@ -3,11 +3,16 @@ public class SearchDriver {
   private HttpTransport http;
   String url;
   Random random = new Random();
-  Vector < Vector < String >> queries = new Vector < Vector < String >> ();
+  Vector<Vector<String>> queries = new Vector<Vector<String>>();
   String frontend, termsFile;
   private Logger logger;
   private boolean even;
   int termsCount = 0;
+
+  // Variables to track requests and time
+  private long startTime;
+  private long lastPrintTime;
+  private long requestCount = 0;
 
   public SearchDriver() throws XPathExpressionException, IOException {
     ctx = DriverContext.getContext();
@@ -24,26 +29,32 @@ public class SearchDriver {
     termsFile = ctx.getXPathValue("/searchBenchmark/filesConfig/termsFile").trim();
     FileInputStream fstream = new FileInputStream(termsFile);
     DataInputStream in = new DataInputStream(fstream);
-    BufferedReader br = new BufferedReader(new InputStreamReader( in ));
+    BufferedReader br = new BufferedReader(new InputStreamReader(in));
     String strLine;
     while ((strLine = br.readLine()) != null)
-      termsCount++; in .close();
+      termsCount++;
+    in.close();
     http = HttpTransport.newInstance();
+
+    // Initialize the start time and last print time
+    startTime = System.currentTimeMillis();
+    lastPrintTime = startTime;
   }
+
   private void Prefetch(int num) throws IOException {
     FileInputStream fstream = new FileInputStream(termsFile);
     DataInputStream in = new DataInputStream(fstream);
-    BufferedReader br = new BufferedReader(new InputStreamReader( in ));
-    Vector < Integer > linesToGet = new Vector < Integer > ();
-    Vector < Integer > wordBelonging = new Vector < Integer > ();
+    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+    Vector<Integer> linesToGet = new Vector<Integer>();
+    Vector<Integer> wordBelonging = new Vector<Integer>();
     String strLine;
     if (queries != null)
       queries.removeAllElements();
-    queries = new Vector < Vector < String >> ();
+    queries = new Vector<Vector<String>>();
     for (int i = 0; i < num; i++) {
       int randomCard = random.nextInt(100);
       int termsSize = termsCount;
-      Vector < String > query = new Vector < String > ();
+      Vector<String> query = new Vector<String>();
       queries.add(query);
       // Create the query
       linesToGet.add(random.nextInt(termsSize));
@@ -91,10 +102,12 @@ public class SearchDriver {
         i++;
       }
       lineNum++;
-    } in .close();
+    }
+    in.close();
     wordBelonging.removeAllElements();
     linesToGet.removeAllElements();
   }
+
   @BenchmarkOperation(
     name = "GET",
     max90th = 0.5,
@@ -104,7 +117,7 @@ public class SearchDriver {
     if (queries.isEmpty()) {
       Prefetch(100);
     }
-    Vector < String > queryVector = queries.remove(0);
+    Vector<String> queryVector = queries.remove(0);
     String query = "";
     boolean first = true;
     for (String s: queryVector) {
@@ -119,8 +132,25 @@ public class SearchDriver {
     try {
       StringBuilder sb = http.fetchURL(url);
       System.out.println(sb.toString());
+
+      // Increment request count
+      requestCount++;
+
+      // Calculate and print total requests, interval, and RPS
+      long currentTime = System.currentTimeMillis();
+      long elapsedTime = currentTime - startTime;
+      long interval = currentTime - lastPrintTime;
+      double rps = (requestCount / (elapsedTime / 1000.0));
+
+      System.out.println("Total requests: " + requestCount);
+      System.out.println("Interval: " + interval + " ms");
+      System.out.println("Requests per second: " + rps);
+
+      lastPrintTime = currentTime;
+
     } catch (IOException e) {
       logger.severe("ERROR!\n");
     }
   }
 }
+

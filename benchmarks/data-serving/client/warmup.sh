@@ -2,7 +2,7 @@
 
 # This script helps to fill the server database with given data set size. 
 # Usage: warmup.sh <server_ip> <record_count> <threads=1>
-# Each record takes 1KB to store, so if you want a 10GB database, just giving 10M records.
+# Each record takes 1KB to store, so if you want a 10GB database, just give 10M records.
 
 if [ $# -le 1 ]; then
     echo "usage: warm.sh <server_ip> <record_count> <threads=1>"
@@ -32,7 +32,7 @@ first_server=$(cut -d',' -f1 <<< "$1")
 exit=0
 while [ $exit -eq 0 ]; do
     set +e
-    cqlsh -f /setup_tables.txt $first_server
+    /opt/cassandra/bin/cqlsh -f /setup_tables.txt $first_server
     if [[ "$?" -eq 0 ]]; then
         exit=1
     else
@@ -51,5 +51,3 @@ echo '======================================================'
 echo '======================================================'
 echo 'Warm up is done.'
 echo '======================================================'
-
-
